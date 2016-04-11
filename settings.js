@@ -1,6 +1,7 @@
 module.exports = {
   "fixtures": [
     {
+      "id": 1,
       "name": "rgbw - par",
       "type": "rgbw",
       "channels": 7,
@@ -16,6 +17,7 @@ module.exports = {
       }
     },
     {
+      "id": 2,
       "name": "rgb - strip",
       "type": "rgb",
       "channels": 3,

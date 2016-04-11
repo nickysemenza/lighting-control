@@ -1,0 +1,7 @@
+<h1>Lighting Control</h1>
+<div ng-repeat="light in lights">
+	<hr>
+	<!--<pre>{{light | json}}</pre>-->
+	<h4>{{light.name}}<h4>
+	<button type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB</button>
+</div>
