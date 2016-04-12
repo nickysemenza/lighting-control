@@ -9,7 +9,7 @@ web-based lighting control for DMX fixtures using node, angular, express, and re
 
 * DMX channel values are stored/cached in redis, and daemon.js continually sends the values over to the OLA server's `/set_dmx` endpoint.
 
-* The web interface displays a colorpicker for all the rgb fixtures defined in settings.js, and maps the RGB value selected to the appropriate channel number 
+* The web interface displays a colorpicker for all the rgb fixtures defined in settings.js, and maps the RGB value selected to the appropriate channel number + value (0-255). This information is then sent over to redis and the light updates with no noticeable delay.
 
   * ex: if the colors{} block of the fixture definition defines: `"r": 2, "g": 3, "b": 4`, then  `rgb(200,132,5)` would need to be converted to channel 2@200, channel 3@132, etc...
 
