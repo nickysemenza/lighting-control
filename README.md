@@ -3,7 +3,7 @@ web-based lighting control for DMX fixtures using node, angular, express, and re
 
 
 ![Imgur](http://i.imgur.com/kv9XzDx.gif)
-
+<iframe src="//giphy.com/embed/xT1XGQmI777rApdcg8" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 ##How it works
 * I have the [Open Lighting Architecture](https://www.openlighting.org/ola/) server installed on my raspberry pi, and I have a USB<->DMX adapter plugged into the pi, which is plugged into my lights
