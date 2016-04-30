@@ -7,6 +7,12 @@ module.exports = {
       "channels": 7,
       "start": 1,
       "end": 7,
+      "modes":["manual","rgbcycle","rgbjump"],
+      "mode": "rgbcycle",
+      "params": {
+        "fade_step": 20,
+        "cycle_period": 300,
+      },
       "has_dimmer": true,
       "dimmer": 1,
       "colors": {
@@ -23,6 +29,12 @@ module.exports = {
       "channels": 3,
       "start": 10,
       "end": 12,
+      "modes":["manual","rgbcycle"],
+      "mode": "manual",
+      "params": {
+        "fade_step": 20,
+        "cycle_period": 300,
+      },
       "has_dimmer": false,
       "colors": {
         "r": 10,
@@ -33,7 +45,7 @@ module.exports = {
   ],
   "ola_server": 
   {
-    "ip": "128.211.242.211",
+    "ip": "localhost",
     "port": 9090,
     "universe": 2
   }

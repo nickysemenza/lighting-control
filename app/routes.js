@@ -6,12 +6,6 @@ client.on("error", function (err) {
 });
 module.exports = function(app) {
 
-	// server routes ===========================================================
-	// handle things like api calls
-	// authentication routes
-
-	// frontend routes =========================================================
-	// route to handle all angular requests
 	app.get('/lights', function(req, res) {
 		res.json(settings.fixtures);
 	});
@@ -24,17 +18,16 @@ module.exports = function(app) {
 		}
 		res.json("ok");
 	});
-	app.get('/test', function(req, res) {
+	app.get('/reset', function(req, res) {
 		settings.fixtures.forEach(function(l)
 		{
-			console.log(l.id);
-			// client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
-			client.hset("light-modes", l.id, "manual", redis.print);
+			client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
 		});
 
 	});
 
 	app.get('*', function(req, res) {
+		//serve angular
 		res.sendfile('./public/index.html');
 	});
 

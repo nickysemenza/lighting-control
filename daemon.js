@@ -9,12 +9,13 @@ client.on("error", function (err) {
 
 function updateDMX()
 {
-	var test = [];
+	var vals = [];
 	client.hgetall("dmx-vals", function (err, obj) {
 		Object.keys(obj).forEach( key => {
-			test[key]=obj[key];
+			vals[key]=obj[key];
 		});
-		var dmx_values = test.slice(1).join(); //make comma seperated array, but ignore 0 index
+		var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
+		// console.log(dmx_values);
 		request.post('http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx')
 			.form({
 					d:dmx_values,
@@ -22,51 +23,77 @@ function updateDMX()
 				  });
 	});
 }
+
+function setRGB(light,r,g,b)
+{
+	var color_channel_map = light.colors;
+	client.hset("dmx-vals", color_channel_map.r, r);
+	client.hset("dmx-vals", color_channel_map.g, g);
+	client.hset("dmx-vals", color_channel_map.b, b);
+}
 setInterval(updateDMX, 10);
 
-var lightsById = {};
-settings.fixtures.forEach(function(l)
-{
-	//so we can access by ID;
-	lightsById[l.id] = l;
-});
-var timerlist = {};
 var colorlist = {};
 
-function advanceLightStage(light_id,mode)
-{
-
-	if(mode=="fade")
+var a = {};
+function advanceLightStage(light)
+{	
+	var id = light.id;
+	var mode = light.mode;
+	if(mode=="rgbcycle")
 	{
-		var fade_step = 10;
-		if(colorlist[light_id]==null)
-		colorlist[light_id] = Color({r: 0, g: 255, b: 255});
-		var current_color = colorlist[light_id];
-		// console.log(current_color.hexString());
-		var color_channel_map = lightsById[light_id].colors;
-		client.hset("dmx-vals", color_channel_map.r, current_color.red());
-		client.hset("dmx-vals", color_channel_map.g, current_color.green());
-		client.hset("dmx-vals", color_channel_map.b, current_color.blue());
-		current_color.rotate(fade_step);
+		if(colorlist[id]==null)
+			colorlist[id] = Color({r:0, g: 255, b: 0});
+		var c = colorlist[id];
+
+		setRGB(light,c.red(),c.green(),c.blue());
+		c.rotate(light.params.fade_step);//go to next color
+		console.log(light.params.fade_step);//go to next color
+	}
+	if(mode=="rgbjump")
+	{
+		var stages = 3;
+		if(a[id]==undefined)
+			a[id]=0;
+		if(a[id]%stages==0)
+			setRGB(light, 255,0,0);
+		if(a[id]%stages==1)
+			setRGB(light, 0,255,0);
+		if(a[id]%stages==2)
+			setRGB(light, 0,0,255);
+		a[id]++;
 	}
 }
 
+var timerlist = {};
+var lightObjs = {};
 function lightModeWatcher()
 {
-	client.hgetall("light-modes", function (err, obj) {
+	client.hgetall("light-settings", function (err, obj) {
     Object.keys(obj).forEach( key => {
-    		var mode = obj[key];
-    		console.log(key, obj[key]);
-			if(!timerlist[key] && mode!="manual")
+    		var light = JSON.parse(obj[key]);
+    		var mode = light.mode;
+    		// console.log(key, obj[key]);
+			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
 			{
-				var period = 70;
-				timerlist[key] = setInterval( function() { advanceLightStage(key,mode); }, period );
+				timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
 			}
 			else if(timerlist[key] && mode=="manual")//switch back to manual mode
 			{
 				clearInterval(timerlist[key]);
 				timerlist[key]=null;//reset the timer
 			}
+			if(JSON.stringify(lightObjs[light.id]) != JSON.stringify(light))
+			{
+				//the light config changed
+				if(mode!="manual")
+				{
+					//restart the intervaller because light obj has updated
+					clearInterval(timerlist[key]);
+					timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
+				}
+			}
+			lightObjs[light.id] = light;
 		});
 	});
 }
