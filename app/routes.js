@@ -24,6 +24,16 @@ module.exports = function(app) {
 		}
 		res.json("ok");
 	});
+	app.get('/test', function(req, res) {
+		settings.fixtures.forEach(function(l)
+		{
+			console.log(l.id);
+			// client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
+			client.hset("light-modes", l.id, "manual", redis.print);
+		});
+
+	});
+
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html');
 	});

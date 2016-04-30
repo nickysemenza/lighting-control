@@ -7,16 +7,7 @@ client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-var lightsById = [];
-settings.fixtures.forEach(function(l)
-{
-	//so we can access by ID;
-	lightsById[l.id] = l;
-});
-
-var timerlist = [];
-var colorlist = [];
-function updatevals()
+function updateDMX()
 {
 	var test = [];
 	client.hgetall("dmx-vals", function (err, obj) {
@@ -31,18 +22,33 @@ function updatevals()
 				  });
 	});
 }
-setInterval(updatevals, 10);
+setInterval(updateDMX, 10);
+
+var lightsById = {};
+settings.fixtures.forEach(function(l)
+{
+	//so we can access by ID;
+	lightsById[l.id] = l;
+});
+var timerlist = {};
+var colorlist = {};
 
 function advanceLightStage(light_id,mode)
 {
-	if(colorlist[light_id]==null)
+
+	if(mode=="fade")
+	{
+		var fade_step = 10;
+		if(colorlist[light_id]==null)
 		colorlist[light_id] = Color({r: 0, g: 255, b: 255});
-	var current_color = colorlist[light_id];
-	var color_channel_map = lightsById[1].colors;
-	client.hset("dmx-vals", color_channel_map.r, current_color.red());
-	client.hset("dmx-vals", color_channel_map.g, current_color.green());
-	client.hset("dmx-vals", color_channel_map.b, current_color.blue());
-	current_color.rotate(5);
+		var current_color = colorlist[light_id];
+		// console.log(current_color.hexString());
+		var color_channel_map = lightsById[light_id].colors;
+		client.hset("dmx-vals", color_channel_map.r, current_color.red());
+		client.hset("dmx-vals", color_channel_map.g, current_color.green());
+		client.hset("dmx-vals", color_channel_map.b, current_color.blue());
+		current_color.rotate(fade_step);
+	}
 }
 
 function lightModeWatcher()
@@ -50,9 +56,11 @@ function lightModeWatcher()
 	client.hgetall("light-modes", function (err, obj) {
     Object.keys(obj).forEach( key => {
     		var mode = obj[key];
+    		console.log(key, obj[key]);
 			if(!timerlist[key] && mode!="manual")
 			{
-				timerlist[key] = setInterval( function() { advanceLightStage(key,mode); }, 30 );
+				var period = 70;
+				timerlist[key] = setInterval( function() { advanceLightStage(key,mode); }, period );
 			}
 			else if(timerlist[key] && mode=="manual")//switch back to manual mode
 			{
