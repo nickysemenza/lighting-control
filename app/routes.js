@@ -9,6 +9,15 @@ module.exports = function(app) {
 	app.get('/lights', function(req, res) {
 		res.json(settings.fixtures);
 	});
+	app.get('/lights/:id', function(req, res) {
+		var id = req.params.id;
+
+		client.hget("light-settings", id, function (err, obj) {
+		   res.json(JSON.parse(obj));
+		});
+
+		
+	});
 	app.put('/channels', function(req, res) {
 		for (var propName in req.query) {
 		    if (req.query.hasOwnProperty(propName)) {
