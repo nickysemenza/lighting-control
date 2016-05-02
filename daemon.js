@@ -31,7 +31,7 @@ function setRGB(light,r,g,b)
 	client.hset("dmx-vals", color_channel_map.g, g);
 	client.hset("dmx-vals", color_channel_map.b, b);
 }
-setInterval(updateDMX, 10);
+setInterval(updateDMX, 5);
 
 var colorlist = {};
 
@@ -48,7 +48,6 @@ function advanceLightStage(light)
 
 		setRGB(light,c.red(),c.green(),c.blue());
 		c.rotate(light.params.fade_step);//go to next color
-		console.log(light.params.fade_step);//go to next color
 	}
 	if(mode=="rgbjump")
 	{
@@ -61,6 +60,17 @@ function advanceLightStage(light)
 			setRGB(light, 0,255,0);
 		if(a[id]%stages==2)
 			setRGB(light, 0,0,255);
+		a[id]++;
+	}
+	if(mode=="strobe")
+	{
+		var stages = 2;
+		if(a[id]==undefined)
+			a[id]=0;
+		if(a[id]%stages==0)
+			setRGB(light,255,255,255);
+		if(a[id]%stages==1)
+			setRGB(light, 0,0,0);
 		a[id]++;
 	}
 }
@@ -97,4 +107,4 @@ function lightModeWatcher()
 		});
 	});
 }
- setInterval(lightModeWatcher, 10);
+ setInterval(lightModeWatcher, 5);
