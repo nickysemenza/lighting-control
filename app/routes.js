@@ -14,10 +14,35 @@ module.exports = function(app) {
 
 		client.hget("light-settings", id, function (err, obj) {
 		   res.json(JSON.parse(obj));
+		});		
+	});
+
+	app.put('/lights/:id', function(req, res) {
+		var id = req.params.id;
+
+		console.log(req.query);	
+		console.log(req.body);
+
+		var r = req.body;
+
+
+		client.hget("light-settings", id, function (err, obj) {
+		   light = JSON.parse(obj);
+
+		   for (key in r)
+				{
+					console.log(key, r[key]);
+					if(key=="mode")
+						light.mode = r[key];
+				}	
+				client.hset("light-settings", id, JSON.stringify(light), function (err, obj) {
+				   res.json("h]");
+				});	
+			});
 		});
 
 		
-	});
+
 	app.put('/channels', function(req, res) {
 		for (var propName in req.query) {
 		    if (req.query.hasOwnProperty(propName)) {
