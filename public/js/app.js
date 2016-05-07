@@ -34,6 +34,12 @@ app.controller('MainController', function($scope, Restangular,$timeout) {
   };
   $scope.$watch('lights', debounceUpdate, true);
 
+  $scope.setMode = function(light, mode)
+  {
+  	light.mode = mode;
+  	console.log(light.id, mode);
+  };
+
 });
 
 

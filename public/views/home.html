@@ -2,6 +2,17 @@
 <div ng-repeat="light in lights">
 	<hr>
 	<!--<pre>{{light | json}}</pre>-->
-	<h4>{{light.name}}<h4>
+	<h4>{{light.name}}</h4>
+		<small>mode: {{light.mode}}</small>
+		<br>
+
+	<pre>{{light | json}}</pre>
 	<button type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB color</button>
+
+
+	<div class="btn-group btn-radio">
+    <button ng-repeat="m in light.modes" type="button" class="btn btn-default" ng-click="setMode(light,m)">{{m}}</button
+  </div>
+
+
 </div>
