@@ -11,14 +11,26 @@ app.controller('MainController', function($scope, Restangular,$timeout) {
 			if(l.rgbraw!=undefined)
 			{
 				var channel_vals_array = l.rgbraw.slice(4, -1).split(",");
-				var updatechannels = {};
-				updatechannels[l.colors.r]=channel_vals_array[0];
-				updatechannels[l.colors.g]=channel_vals_array[1];
-				updatechannels[l.colors.b]=channel_vals_array[2];
-				Restangular.one('channels').put(updatechannels)
-				.then(function(data) {
-				});	
+
+				l.params.colors = l.params.colors || {};
+				l.params.colors.r=channel_vals_array[0];
+				l.params.colors.g=channel_vals_array[1];
+				l.params.colors.b=channel_vals_array[2];
+
+				// var updatechannels = {};
+				// updatechannels[l.colors.r]=channel_vals_array[0];
+				// updatechannels[l.colors.g]=channel_vals_array[1];
+				// updatechannels[l.colors.b]=channel_vals_array[2];
+				// Restangular.one('channels')
+				// .put(updatechannels)
+				// 	.then(function(data) {
+				
+				// });	
 			}
+			Restangular
+				.one('lights/'+l.id)
+				.customPUT(l)
+				.then(function(data) {});	
 		})
 	}
 	var timeout = null;

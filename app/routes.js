@@ -7,7 +7,14 @@ client.on("error", function (err) {
 module.exports = function(app) {
 
 	app.get('/lights', function(req, res) {
-		res.json(settings.fixtures);
+		//res.json(settings.fixtures);
+		r = [];
+		client.hgetall("light-settings", function (err, obj) {
+		   Object.keys(obj).forEach( key => {
+		   	r.push(JSON.parse(obj[key]));
+		   });
+		   res.json(r);
+		});	
 	});
 	app.get('/lights/:id', function(req, res) {
 		var id = req.params.id;
@@ -19,24 +26,20 @@ module.exports = function(app) {
 
 	app.put('/lights/:id', function(req, res) {
 		var id = req.params.id;
-
-		console.log(req.query);	
-		console.log(req.body);
-
-		var r = req.body;
-
-
+		var l = req.body;
 		client.hget("light-settings", id, function (err, obj) {
 		   light = JSON.parse(obj);
 
-		   for (key in r)
+		   for (key in l)
 				{
-					console.log(key, r[key]);
+					console.log(key, l[key]);
 					if(key=="mode")
-						light.mode = r[key];
+						light.mode = l[key];
+					if(key=="params")
+						light.params = l[key];
 				}	
 				client.hset("light-settings", id, JSON.stringify(light), function (err, obj) {
-				   res.json("h]");
+				   res.json(light);
 				});	
 			});
 		});
