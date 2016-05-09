@@ -84,6 +84,12 @@ function lightModeWatcher()
     		var light = JSON.parse(obj[key]);
     		var mode = light.mode;
     		// console.log(key, obj[key]);
+
+    		if(mode=="manual")
+    		{
+    			setRGB(light,light.params.colors.r,light.params.colors.g,light.params.colors.b);
+    		}
+
 			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
 			{
 				timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
