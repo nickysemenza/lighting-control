@@ -54,6 +54,35 @@ app.controller('MainController', function($scope, Restangular,$timeout) {
 
 });
 
+app.controller('VisController', function($scope, Restangular,$timeout) {
+	getDMX();
+	Restangular.one('lights').get().then(function(data) {
+	  $scope.lights=data;
+	});
+
+	$scope.data = {};
+	$scope.data.r=255;
+	$scope.data.g=55;
+	$scope.data.b=255;
+
+	function getDMX() 
+	{
+		Restangular.one('dmx').get().then(function(data) {
+		  $scope.dmx=Restangular.stripRestangular(data);
+		  getDMX();
+		});
+	}
+	//setInterval(getDMX,10);
+
+	$scope.get_color = function(light)
+	{
+		if($scope.dmx===undefined)
+			return {};
+		return {'background-color': 'rgb(' + $scope.dmx[light.colors.r] + ',' + $scope.dmx[light.colors.g] + ',' + $scope.dmx[light.colors.b]+')'};
+	}
+});
+
+
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
@@ -61,6 +90,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/', {
 			templateUrl: 'views/home.html',
 			controller: 'MainController'
+		})
+		.when('/vis', {
+			templateUrl: 'views/vis.html',
+			controller: 'VisController'
 		});
 
 	$locationProvider.html5Mode(true);

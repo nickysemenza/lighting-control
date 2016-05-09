@@ -32,7 +32,7 @@ module.exports = function(app) {
 
 		   for (key in l)
 				{
-					console.log(key, l[key]);
+					// console.log(key, l[key]);
 					if(key=="mode")
 						light.mode = l[key];
 					if(key=="params")
@@ -61,6 +61,13 @@ module.exports = function(app) {
 			client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
 		});
 
+	});
+
+	app.get('/dmx', function(req, res) {
+		r = [];
+		client.hgetall("dmx-vals", function (err, obj) {
+		   res.json(obj);
+		});	
 	});
 
 	app.get('*', function(req, res) {
