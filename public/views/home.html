@@ -7,7 +7,7 @@
 		<br>
 
 	<pre>{{light | json}}</pre>
-	<button type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB color</button>
+	<button ng-if="light.mode == 'manual'" type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB color</button>
 
 
 	<div class="btn-group btn-radio">

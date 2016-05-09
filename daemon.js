@@ -15,7 +15,7 @@ function updateDMX()
 			vals[key]=obj[key];
 		});
 		var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
-		// console.log(dmx_values);
+		console.log(dmx_values);
 		request.post('http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx')
 			.form({
 					d:dmx_values,

@@ -2,7 +2,6 @@ var app = angular.module('app', ['ngRoute','colorpicker.module','ngRoute','resta
 
 app.controller('MainController', function($scope, Restangular,$timeout) {
 	Restangular.one('lights').get().then(function(data) {
-	  console.log(data);
 	  $scope.lights=data;
 	});	
 	function update() {
@@ -48,8 +47,9 @@ app.controller('MainController', function($scope, Restangular,$timeout) {
 
   $scope.setMode = function(light, mode)
   {
+
   	light.mode = mode;
-  	console.log(light.id, mode);
+  	console.log("mode of: ", light.id, mode);
   };
 
 });
