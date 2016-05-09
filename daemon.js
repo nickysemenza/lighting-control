@@ -47,7 +47,7 @@ function advanceLightStage(light)
 		var c = colorlist[id];
 
 		setRGB(light,c.red(),c.green(),c.blue());
-		c.rotate(light.params.fade_step);//go to next color
+		c.rotate(light.params.step);//go to next color
 	}
 	if(mode=="rgbjump")
 	{

@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute','colorpicker.module','ngRoute','restangular']);
+var app = angular.module('app', ['ngRoute','colorpicker.module','ngRoute','restangular','rzModule']);
 
 app.controller('MainController', function($scope, Restangular,$timeout) {
 	Restangular.one('lights').get().then(function(data) {
@@ -72,7 +72,7 @@ app.controller('VisController', function($scope, Restangular,$timeout) {
 		  getDMX();
 		});
 	}
-	//setInterval(getDMX,10);
+	setInterval(getDMX,1000);
 
 	$scope.get_color = function(light)
 	{

@@ -6,13 +6,16 @@
 		<small>mode: {{light.mode}}</small>
 		<br>
 
-	<pre>{{light | json}}</pre>
-	<button ng-if="light.mode == 'manual'" type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB color</button>
+	<!-- <pre>{{light | json}}</pre> -->
+	
 
+	step: <rzslider rz-slider-model="light.params.step"  rz-slider-options="{floor: -200, ceil: 200}"></rzslider>
+	cycle period: <rzslider rz-slider-model="light.params.cycle_period"  rz-slider-options="{floor: 0, ceil: 450}"></rzslider>
 
 	<div class="btn-group btn-radio">
-    <button ng-repeat="m in light.modes" type="button" class="btn btn-default" ng-click="setMode(light,m)">{{m}}</button
-  </div>
+	    <button ng-repeat="m in light.modes" type="button" class="btn " ng-class="m==light.mode ? 'btn-info' : 'btn-default'" ng-click="setMode(light,m)">{{m}}</button>
+	 </div>
+ 	<button ng-disabled="light.mode != 'manual'" type="button" class="btn btn-primary" colorpicker="rgb" type="text" style="background-color: {{light.rgbraw}}"ng-model="light.rgbraw">pick RGB color</button>
 
 
 </div>

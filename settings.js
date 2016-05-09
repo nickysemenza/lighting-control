@@ -10,7 +10,7 @@ module.exports = {
       "modes":["manual","rgbcycle","rgbjump"],
       "mode": "rgbcycle",
       "params": {
-        "fade_step": 20,
+        "step": 20,
         "cycle_period": 300,
       },
       "has_dimmer": true,
@@ -32,7 +32,7 @@ module.exports = {
       "modes":["manual","rgbcycle"],
       "mode": "manual",
       "params": {
-        "fade_step": 20,
+        "step": 20,
         "cycle_period": 300,
       },
       "has_dimmer": false,
