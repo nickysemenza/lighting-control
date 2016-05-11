@@ -2,50 +2,92 @@ module.exports = {
   "fixtures": [
     {
       "id": 1,
-      "name": "rgbw - par",
+      "name": "desk",
       "type": "rgbw",
-      "channels": 7,
+      "channels": 8,
       "start": 1,
-      "end": 7,
-      "modes":["manual","rgbcycle","rgbjump"],
+      "end": 8,
+      "modes":["manual","rgbcycle","rgbjump","strobe"],
       "mode": "rgbcycle",
       "params": {
+        "dimmer": 255,
         "step": 20,
         "cycle_period": 300,
+        "colors": {
+            "r": "0",
+            "g": "0",
+            "b": "0",
+            "w": "0",
+        }
       },
       "has_dimmer": true,
       "dimmer": 1,
       "colors": {
-        "r": 2,
-        "g": 3,
-        "b": 4,
-        "w": 5
+        "r": 5,
+        "g": 6,
+        "b": 7,
+        "w": 8
       }
     },
     {
       "id": 2,
+      "name": "bookcase",
+      "type": "rgbw",
+      "channels": 8,
+      "start": 11,
+      "end": 18,
+      "modes":["manual","rgbcycle","rgbjump","strobe"],
+      "mode": "rgbcycle",
+      "params": {
+        "dimmer": 255,
+        "step": 20,
+        "cycle_period": 300,
+        "colors": {
+            "r": "0",
+            "g": "0",
+            "b": "0",
+            "w": "0"
+        }
+      },
+      "has_dimmer": true,
+      "dimmer": 11,
+      "colors": {
+        "r": 15,
+        "g": 16,
+        "b": 17,
+        "w": 18
+      }
+    },
+    {
+      "id": 4,
       "name": "rgb - strip",
       "type": "rgb",
       "channels": 3,
-      "start": 10,
-      "end": 12,
+      "start": 40,
+      "end": 42,
       "modes":["manual","rgbcycle"],
       "mode": "manual",
       "params": {
+        "dimmer": 255,
         "step": 20,
         "cycle_period": 300,
+        "colors": {
+            "r": "0",
+            "g": "0",
+            "b": "0"
+        }
       },
       "has_dimmer": false,
       "colors": {
-        "r": 10,
-        "g": 11,
-        "b": 12,
+        "r": 40,
+        "g": 41,
+        "b": 42,
       }
     }
   ],
   "ola_server": 
   {
-    "ip": "localhost",
+    "ip": "10.0.1.91",
     "port": 9090,
     "universe": 2
   }

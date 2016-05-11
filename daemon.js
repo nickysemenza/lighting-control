@@ -7,6 +7,7 @@ client.on("error", function (err) {
     console.log("Error " + err);
 });
 
+console.log("running!");
 function updateDMX()
 {
 	var vals = [];
@@ -15,7 +16,7 @@ function updateDMX()
 			vals[key]=obj[key];
 		});
 		var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
-		console.log(dmx_values);
+		// console.log(dmx_values);
 		request.post('http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx')
 			.form({
 					d:dmx_values,
@@ -30,6 +31,16 @@ function setRGB(light,r,g,b)
 	client.hset("dmx-vals", color_channel_map.r, r);
 	client.hset("dmx-vals", color_channel_map.g, g);
 	client.hset("dmx-vals", color_channel_map.b, b);
+}
+function setDimmer(light,value)
+{
+	if(light.dimmer!=null)
+		client.hset("dmx-vals", light.dimmer, value);
+}
+
+function setWhite(light,value)
+{
+	client.hset("dmx-vals", light.colors.w, value);
 }
 setInterval(updateDMX, 5);
 
@@ -88,8 +99,10 @@ function lightModeWatcher()
     		if(mode=="manual")
     		{
     			setRGB(light,light.params.colors.r,light.params.colors.g,light.params.colors.b);
+    			if(light.colors.w!=undefined)//if it supports white
+    				setWhite(light,light.params.colors.w);
     		}
-
+    		setDimmer(light, light.params.dimmer);
 			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
 			{
 				timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
