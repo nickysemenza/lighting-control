@@ -22,6 +22,7 @@ function updateDMX()
 					d:dmx_values,
 					u:settings.ola_server.universe
 				  });
+
 	});
 }
 
@@ -42,7 +43,7 @@ function setWhite(light,value)
 {
 	client.hset("dmx-vals", light.colors.w, value);
 }
-setInterval(updateDMX, 5);
+setInterval(updateDMX, 10);
 
 var colorlist = {};
 
