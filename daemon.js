@@ -39,13 +39,42 @@ function setRGB(light,r,g,b)
 }
 function setDimmer(light,value)
 {
-	if(light.dimmer!=null)
-		client.hset("dmx-vals", light.dimmer, value);
+	var channel = light.dimmer;
+	if(channel!=null)
+	{
+		client.hget("dmx-vals", channel, function (err, obj) {
+		var current = parseInt(obj);
+		if(current!=value)
+			fadeChannelChange(channel,current,value);
+		});	
+	}
+		// client.hset("dmx-vals", channel, value);
 }
 
 function setWhite(light,value)
 {
-	client.hset("dmx-vals", light.colors.w, value);
+	var channel = light.colors.w;
+	client.hget("dmx-vals", channel, function (err, obj) {
+		var current = parseInt(obj);
+		if(current!=value)
+			fadeChannelChange(channel,current,value);
+	});	
+}
+function fadeChannelChange(channel,current,goal)
+{
+	client.hset("dmx-vals", channel, current);
+	// console.log("current:"+current+" goal:"+goal);
+	if(current == goal)//reached the goal
+		return;
+	var next;
+	if(goal > current)
+		next=current+1;
+	else
+		next=current-1;
+	
+
+	setTimeout(fadeChannelChange, 3, channel,next,goal);
+	//fadeChannelChange(channel,next,goal);
 }
 setInterval(updateDMX, 10);
 
