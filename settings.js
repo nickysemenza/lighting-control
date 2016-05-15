@@ -79,9 +79,9 @@ module.exports = {
       },
       "has_dimmer": false,
       "colors": {
-        "r": 40,
-        "g": 41,
-        "b": 42,
+        "r": 103,
+        "g": 104,
+        "b": 105,
       }
     }
   ],
