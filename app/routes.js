@@ -61,6 +61,7 @@ module.exports = function(app) {
 			client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
 		});
 
+		ress.json("ok");
 	});
 
 	app.get('/dmx', function(req, res) {

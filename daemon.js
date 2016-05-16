@@ -10,22 +10,27 @@ client.on("error", function (err) {
 console.log("running!");
 function updateDMX()
 {
-	var vals = [];
-	client.hgetall("dmx-vals", function (err, obj) {
-		Object.keys(obj).forEach( key => {
-			vals[key]=obj[key];
-		});
-		var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
-		// console.log(dmx_values);
-		request.post(
-			{
-				url: 'http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx',
-				form: {	d:dmx_values, u:settings.ola_server.universe }
-			}, function(err,httpResponse,body){
-				  	if(err)
-				  		console.log(err);
+	[2,3].map( function(uni) 
+	{
+		console.log(uni);
+		var vals = [];
+		client.hgetall("dmx-vals:"+uni, function (err, obj) {
+			Object.keys(obj).forEach( key => {
+				vals[key]=obj[key];
+			});
+			var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
+			console.log(uni, dmx_values.substring(0, 50));
+			request.post(
+				{
+					url: 'http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx',
+					form: {	d:dmx_values, u:uni }
+				}, function(err,httpResponse,body){
+					  	if(err)
+					  		console.log(err);
 
-				  });
+					  });
+
+		});
 
 	});
 }
@@ -33,19 +38,19 @@ function updateDMX()
 function setRGB(light,r,g,b)
 {
 	var color_channel_map = light.colors;
-	client.hset("dmx-vals", color_channel_map.r, r);
-	client.hset("dmx-vals", color_channel_map.g, g);
-	client.hset("dmx-vals", color_channel_map.b, b);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.r, r);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.g, g);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.b, b);
 }
 function setDimmer(light,value)
 {
 	var channel = light.dimmer;
 	if(channel!=null)
 	{
-		client.hget("dmx-vals", channel, function (err, obj) {
+		client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,current,value);
+			fadeChannelChange(channel,current,value,light.universe);
 		});	
 	}
 		// client.hset("dmx-vals", channel, value);
@@ -54,15 +59,15 @@ function setDimmer(light,value)
 function setWhite(light,value)
 {
 	var channel = light.colors.w;
-	client.hget("dmx-vals", channel, function (err, obj) {
+	client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,current,value);
+			fadeChannelChange(channel,current,value,light.universe);
 	});	
 }
-function fadeChannelChange(channel,current,goal)
+function fadeChannelChange(channel,current,goal,uni)
 {
-	client.hset("dmx-vals", channel, current);
+	client.hset("dmx-vals:"+uni, channel, current);
 	// console.log("current:"+current+" goal:"+goal);
 	if(current == goal)//reached the goal
 		return;
@@ -73,10 +78,10 @@ function fadeChannelChange(channel,current,goal)
 		next=current-1;
 	
 
-	setTimeout(fadeChannelChange, 3, channel,next,goal);
+	setTimeout(fadeChannelChange, 3, channel,next,goal,uni);
 	//fadeChannelChange(channel,next,goal);
 }
-setInterval(updateDMX, 10);
+setInterval(updateDMX, 100);
 
 var colorlist = {};
 

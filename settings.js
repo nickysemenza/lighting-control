@@ -4,6 +4,7 @@ module.exports = {
       "id": 1,
       "name": "desk",
       "type": "rgbw",
+      "universe": 2,
       "channels": 8,
       "start": 1,
       "end": 8,
@@ -33,6 +34,7 @@ module.exports = {
       "id": 2,
       "name": "bookcase",
       "type": "rgbw",
+      "universe": 2,
       "channels": 8,
       "start": 11,
       "end": 18,
@@ -61,7 +63,8 @@ module.exports = {
     {
       "id": 4,
       "name": "rgb - strip",
-      "type": "rgb",
+      "type": "strip",
+      "universe": 3,
       "channels": 3,
       "start": 40,
       "end": 42,
@@ -88,7 +91,6 @@ module.exports = {
   "ola_server": 
   {
     "ip": "10.0.1.91",
-    "port": 9090,
-    "universe": 2
+    "port": 9090
   }
 };
