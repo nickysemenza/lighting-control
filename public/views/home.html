@@ -13,11 +13,11 @@
 		cycle period: <rzslider rz-slider-model="light.params.cycle_period"  rz-slider-options="{floor: 0, ceil: 450, showTicks: 50, showTicksValues: true}"></rzslider>
 	</div>
 	<div class="slider-section" ng-if="light.has_dimmer">
-		dimmer: <rzslider rz-slider-model="light.params.dimmer"  rz-slider-options="{floor: 0, ceil: 255, showTicks: 15, showTicksValues: true, vertical: true}"></rzslider>
+		dimmer: <rzslider rz-slider-model="light.params.dimmer"  rz-slider-options="{floor: 0, ceil: 255, showTicks: 15, showTicksValues: true}"></rzslider>
 	</div>
 
 	<div class="slider-section" ng-if="light.type=='rgbw'">
-		white: <rzslider rz-slider-model="light.params.colors.w"  rz-slider-options="{floor: 0, ceil: 255, vertical: true}"></rzslider>
+		white: <rzslider rz-slider-model="light.params.colors.w"  rz-slider-options="{floor: 0, ceil: 255, showTicks: 15, showTicksValues: true}"></rzslider>
 	</div>
 	<br><br><br>
 	<div class="btn-group btn-radio">

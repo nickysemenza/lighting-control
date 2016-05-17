@@ -66,7 +66,7 @@ module.exports = function(app) {
 
 	app.get('/dmx', function(req, res) {
 		r = [];
-		client.hgetall("dmx-vals", function (err, obj) {
+		client.hgetall("dmx-vals:2", function (err, obj) {
 		   res.json(obj);
 		});	
 	});

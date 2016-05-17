@@ -12,14 +12,13 @@ function updateDMX()
 {
 	[2,3].map( function(uni) 
 	{
-		console.log(uni);
 		var vals = [];
 		client.hgetall("dmx-vals:"+uni, function (err, obj) {
 			Object.keys(obj).forEach( key => {
 				vals[key]=obj[key];
 			});
 			var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
-			console.log(uni, dmx_values.substring(0, 50));
+			//console.log(uni, dmx_values.substring(0, 50));
 			request.post(
 				{
 					url: 'http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx',
@@ -34,6 +33,7 @@ function updateDMX()
 
 	});
 }
+setInterval(updateDMX, 45);
 
 function setRGB(light,r,g,b)
 {
@@ -81,8 +81,6 @@ function fadeChannelChange(channel,current,goal,uni)
 	setTimeout(fadeChannelChange, 3, channel,next,goal,uni);
 	//fadeChannelChange(channel,next,goal);
 }
-setInterval(updateDMX, 100);
-
 var colorlist = {};
 
 var a = {};

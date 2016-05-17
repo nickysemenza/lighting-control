@@ -62,7 +62,7 @@ module.exports = {
     },
     {
       "id": 4,
-      "name": "rgb - strip",
+      "name": "rgb - strip #1",
       "type": "strip",
       "universe": 3,
       "channels": 3,
@@ -82,9 +82,36 @@ module.exports = {
       },
       "has_dimmer": false,
       "colors": {
-        "r": 103,
-        "g": 104,
-        "b": 105,
+        "r": 1,
+        "g": 2,
+        "b": 3,
+      }
+    },
+    {
+      "id": 5,
+      "name": "rgb - strip #2",
+      "type": "strip",
+      "universe": 3,
+      "channels": 3,
+      "start": 40,
+      "end": 42,
+      "modes":["manual","rgbcycle"],
+      "mode": "manual",
+      "params": {
+        "dimmer": 255,
+        "step": 20,
+        "cycle_period": 300,
+        "colors": {
+            "r": "0",
+            "g": "0",
+            "b": "0"
+        }
+      },
+      "has_dimmer": false,
+      "colors": {
+        "r": 4,
+        "g": 5,
+        "b": 6,
       }
     }
   ],
