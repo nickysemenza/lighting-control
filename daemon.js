@@ -50,7 +50,7 @@ function setDimmer(light,value)
 		client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,current,value,light.universe);
+			fadeChannelChange(channel,light.universe,current,value,100);
 		});	
 	}
 		// client.hset("dmx-vals", channel, value);
@@ -62,24 +62,30 @@ function setWhite(light,value)
 	client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,current,value,light.universe);
+			fadeChannelChange(channel,light.universe,current,value,100);
 	});	
 }
-function fadeChannelChange(channel,current,goal,uni)
+/*
+* channelNum - the channel number to alter the value of
+* uni - the universe the channel is in
+* current - the current value
+* goal - the target dmx_values
+*/
+function fadeChannelChange(channelNum,uni,current,goal,timeLeft)
 {
-	client.hset("dmx-vals:"+uni, channel, current);
-	// console.log("current:"+current+" goal:"+goal);
+	if(timeLeft==0)//instant change
+		current=goal;
+	client.hset("dmx-vals:"+uni, channelNum, current);
 	if(current == goal)//reached the goal
 		return;
-	var next;
-	if(goal > current)
-		next=current+1;
-	else
-		next=current-1;
-	
 
-	setTimeout(fadeChannelChange, 3, channel,next,goal,uni);
-	//fadeChannelChange(channel,next,goal);
+	var timing = timeLeft/Math.abs(goal-current);
+	var nextVal;
+	if(goal > current)
+		nextVal=current+1;
+	else
+		nextVal=current-1;
+	setTimeout(fadeChannelChange, timing, channelNum,uni,nextVal,goal);
 }
 var colorlist = {};
 
