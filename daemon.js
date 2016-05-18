@@ -38,12 +38,14 @@ function updateDMX()
 }
 setInterval(updateDMX, 45);
 
-function setRGB(light,r,g,b)
+function setRGBW(light,colorArray)
 {
 	var color_channel_map = light.colors;
-	client.hset("dmx-vals:"+light.universe, color_channel_map.r, r);
-	client.hset("dmx-vals:"+light.universe, color_channel_map.g, g);
-	client.hset("dmx-vals:"+light.universe, color_channel_map.b, b);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.r, colorArray.r);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.g, colorArray.g);
+	client.hset("dmx-vals:"+light.universe, color_channel_map.b, colorArray.b);
+	if(colorArray.w != undefined && color_channel_map.w != undefined)
+		client.hset("dmx-vals:"+light.universe, color_channel_map.w, colorArray.w);
 }
 function setDimmer(light,value,time)
 {
@@ -105,7 +107,7 @@ function advanceLightStage(light)
 			colorlist[id] = Color({r:0, g: 255, b: 0});
 		var c = colorlist[id];
 
-		setRGB(light,c.red(),c.green(),c.blue());
+		setRGBW(light,{r: c.red(),g: c.green(),b: c.blue()});
 		c.rotate(light.params.step);//go to next color
 	}
 	if(mode=="rgbjump" || mode=="strobe")
@@ -118,7 +120,7 @@ function advanceLightStage(light)
 
 		for (i = 0; i < numStages; i++) { 
     		if(a[id]%numStages==i)
-				setRGB(light, anim.frames[i].colors.r,anim.frames[i].colors.g,anim.frames[i].colors.b);
+				setRGBW(light, anim.frames[i].colors);
 		}
 		a[id]++;
 	}
@@ -136,7 +138,7 @@ function lightModeWatcher()
 
     		if(mode=="manual")
     		{
-    			setRGB(light,light.params.colors.r,light.params.colors.g,light.params.colors.b);
+    			setRGBW(light,light.params.colors);
     			if(light.colors.w!=undefined)//if it supports white
     				setWhite(light,light.params.colors.w);
     		}
