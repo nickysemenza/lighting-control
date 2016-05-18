@@ -2,10 +2,13 @@ var redis = require("redis");
 var client = redis.createClient();
 var request = require('request');
 var settings = require('./settings');
+var animations = require('./animations');
 var Color = require("color");
 client.on("error", function (err) {
     console.log("Error " + err);
 });
+
+
 
 console.log("running!");
 function updateDMX()
@@ -42,27 +45,29 @@ function setRGB(light,r,g,b)
 	client.hset("dmx-vals:"+light.universe, color_channel_map.g, g);
 	client.hset("dmx-vals:"+light.universe, color_channel_map.b, b);
 }
-function setDimmer(light,value)
+function setDimmer(light,value,time)
 {
+	time = time || 0;
 	var channel = light.dimmer;
 	if(channel!=null)
 	{
 		client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,light.universe,current,value,100);
+			fadeChannelChange(channel,light.universe,current,value,time);
 		});	
 	}
 		// client.hset("dmx-vals", channel, value);
 }
 
-function setWhite(light,value)
+function setWhite(light,value,time)
 {
+	time = time || 0;
 	var channel = light.colors.w;
 	client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
 		var current = parseInt(obj);
 		if(current!=value)
-			fadeChannelChange(channel,light.universe,current,value,100);
+			fadeChannelChange(channel,light.universe,current,value,time);
 	});	
 }
 /*
@@ -85,7 +90,7 @@ function fadeChannelChange(channelNum,uni,current,goal,timeLeft)
 		nextVal=current+1;
 	else
 		nextVal=current-1;
-	setTimeout(fadeChannelChange, timing, channelNum,uni,nextVal,goal);
+	setTimeout(fadeChannelChange, timing, channelNum,uni,nextVal,goal, timeLeft-timing);
 }
 var colorlist = {};
 
@@ -103,28 +108,18 @@ function advanceLightStage(light)
 		setRGB(light,c.red(),c.green(),c.blue());
 		c.rotate(light.params.step);//go to next color
 	}
-	if(mode=="rgbjump")
+	if(mode=="rgbjump" || mode=="strobe")
 	{
-		var stages = 3;
-		if(a[id]==undefined)
+
+		var anim = animations[mode];
+		var numStages = anim.frames.length;
+		if(a[id]==undefined || a[id]>=numStages)
 			a[id]=0;
-		if(a[id]%stages==0)
-			setRGB(light, 255,0,0);
-		if(a[id]%stages==1)
-			setRGB(light, 0,255,0);
-		if(a[id]%stages==2)
-			setRGB(light, 0,0,255);
-		a[id]++;
-	}
-	if(mode=="strobe")
-	{
-		var stages = 2;
-		if(a[id]==undefined)
-			a[id]=0;
-		if(a[id]%stages==0)
-			setRGB(light,255,255,255);
-		if(a[id]%stages==1)
-			setRGB(light, 0,0,0);
+
+		for (i = 0; i < numStages; i++) { 
+    		if(a[id]%numStages==i)
+				setRGB(light, anim.frames[i].colors.r,anim.frames[i].colors.g,anim.frames[i].colors.b);
+		}
 		a[id]++;
 	}
 }
