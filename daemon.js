@@ -38,14 +38,25 @@ function updateDMX()
 }
 setInterval(updateDMX, 45);
 
-function setRGBW(light,colorArray)
+function setRGBW(light,colorArray, time)
 {
-	var color_channel_map = light.colors;
-	client.hset("dmx-vals:"+light.universe, color_channel_map.r, colorArray.r);
-	client.hset("dmx-vals:"+light.universe, color_channel_map.g, colorArray.g);
-	client.hset("dmx-vals:"+light.universe, color_channel_map.b, colorArray.b);
-	if(colorArray.w != undefined && color_channel_map.w != undefined)
-		client.hset("dmx-vals:"+light.universe, color_channel_map.w, colorArray.w);
+	time = time || 0;
+	['r','g','b','w'].map(function(c)
+	{
+		var value = colorArray[c];
+		var channel = light.colors[c];
+		if(value != undefined && channel != undefined) {
+			//client.hset("dmx-vals:" + light.universe, channel, value);
+			client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
+				var current = parseInt(obj);
+				if(current!=value) {
+					console.log("calling fadeChannelChange on channel",channel);
+					fadeChannelChange(channel, light.universe, current, value, time);
+				}
+			});
+		}
+	});
+
 }
 function setDimmer(light,value,time)
 {
@@ -61,17 +72,6 @@ function setDimmer(light,value,time)
 	}
 		// client.hset("dmx-vals", channel, value);
 }
-
-function setWhite(light,value,time)
-{
-	time = time || 0;
-	var channel = light.colors.w;
-	client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
-		var current = parseInt(obj);
-		if(current!=value)
-			fadeChannelChange(channel,light.universe,current,value,time);
-	});	
-}
 /*
 * channelNum - the channel number to alter the value of
 * uni - the universe the channel is in
@@ -85,13 +85,13 @@ function fadeChannelChange(channelNum,uni,current,goal,timeLeft)
 	client.hset("dmx-vals:"+uni, channelNum, current);
 	if(current == goal)//reached the goal
 		return;
-
 	var timing = timeLeft/Math.abs(goal-current);
 	var nextVal;
 	if(goal > current)
 		nextVal=current+1;
 	else
 		nextVal=current-1;
+	console.log(channelNum+"@"+current+"->"+goal+ "| "+timeLeft);
 	setTimeout(fadeChannelChange, timing, channelNum,uni,nextVal,goal, timeLeft-timing);
 }
 var colorlist = {};
@@ -126,6 +126,20 @@ function advanceLightStage(light)
 	}
 }
 
+
+
+client.hgetall("light-settings", function (err, obj) {
+	Object.keys(obj).forEach( key => {
+		var light = JSON.parse(obj[key]);
+		setRGBW(light,{r:255,g:255,b:255,w:255},100);
+		//setRGBW(light,{r:0},100);
+		//setRGBW(light,{g:255},100);
+	});
+});
+
+
+
+
 var timerlist = {};
 var lightObjs = {};
 function lightModeWatcher()
@@ -139,8 +153,8 @@ function lightModeWatcher()
     		if(mode=="manual")
     		{
     			setRGBW(light,light.params.colors);
-    			if(light.colors.w!=undefined)//if it supports white
-    				setWhite(light,light.params.colors.w);
+    			//if(light.colors.w!=undefined)//if it supports white
+    			//	setWhite(light,light.params.colors.w);
     		}
     		setDimmer(light, light.params.dimmer);
 			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
@@ -166,4 +180,4 @@ function lightModeWatcher()
 		});
 	});
 }
- setInterval(lightModeWatcher, 5);
+ //setInterval(lightModeWatcher, 5);
