@@ -1,13 +1,10 @@
-function test() {
-    console.log("hi");
-}
-
 var redis = require("redis");
 var client = redis.createClient();
 var bluebird = require("bluebird");
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
+
 /**
  * animates the change in a channel value
  *
@@ -38,9 +35,10 @@ function fadeChannelChange(channelNum,uni,current,goal,timeLeft)
  */
 function setRGBW(light,colorArray, time)
 {
+    time = time || 0;
     return new Promise(function(resolve, reject) {
+        setDimmer(light,255,0);
         console.log('setRGBW', light.id, light.name, colorArray);
-        time = time || 0;
         ['r', 'g', 'b', 'w'].map(function (c) {
             var value = colorArray[c];
             var channel = light.colors[c];
@@ -89,7 +87,6 @@ function getLightByID(id)
 }
 
 module.exports = {
-    test: test,
     fadeChannelChange: fadeChannelChange,
     setRGBW: setRGBW,
     setDimmer: setDimmer,

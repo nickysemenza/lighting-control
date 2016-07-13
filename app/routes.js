@@ -11,7 +11,7 @@ module.exports = function(app) {
 		//res.json(settings.fixtures);
 		r = [];
 		client.hgetall("light-settings", function (err, obj) {
-		   Object.keys(obj).forEach( key => {
+		   Object.keys(obj).forEach( function(key) {
 		   	r.push(JSON.parse(obj[key]));
 		   });
 		   res.json(r);
@@ -45,6 +45,10 @@ module.exports = function(app) {
 			});
 		});
 
+	app.put('/q', function(req, res) {
+		client.lpush('queue', JSON.stringify(req.body))
+		res.json("yay");
+	});
 		
 
 	app.put('/channels', function(req, res) {
@@ -66,16 +70,16 @@ module.exports = function(app) {
 	});
 	app.put('/c/:id/', function(req,res)
 	{
+		// console.log(Date.now());
 		var id = req.params.id;
-		var l = req.body;
-		// res.json(l);
+		var rgbwvals = req.body;
 
 		utils
 			.getLightByID(id)
 			.then(function(light)
 			{
 				utils.setRGBW(light,
-					l,
+					rgbwvals,
 					req.body.t || 0
 				).then(
 					function()

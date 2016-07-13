@@ -5,46 +5,46 @@ var utils = require('./utils');
 var settings = require('./settings');
 var animations = require('./animations');
 var Color = require("color");
+
 client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-console.log("running!");
-utils.test();
+console.log("running daemon!");
 /**
  * Updates OLA DMX based on redis light-settings dict
  */
-function updateDMX()
-{
-	[2,3].map( function(uni) 
-	{
+function updateDMX() {
+	[2, 3].map(function(uni) {
 		var vals = [];
-		client.hgetall("dmx-vals:"+uni, function (err, obj) {
-			Object.keys(obj).forEach( function(key) {
-				vals[key]=obj[key];
+		client.hgetall("dmx-vals:" + uni, function(err, obj) {
+			Object.keys(obj).forEach(function(key) {
+				vals[key] = obj[key];
 			});
 			var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
 			//console.log(uni, dmx_values.substring(0, 50));
-			request.post(
-				{
-					url: 'http://'+settings.ola_server.ip+':'+settings.ola_server.port+'/set_dmx',
-					form: {	d:dmx_values, u:uni }
-				}, function(err,httpResponse,body){
-					  	if(err)
-					  		console.log(err);
-
-					  });
-
+			request.post({
+				url: 'http://' + settings.ola_server.ip + ':' + settings.ola_server.port + '/set_dmx',
+				form: {
+					d: dmx_values,
+					u: uni
+				}
+			}, function(err, httpResponse, body) {
+				if (err)
+					console.log(err);
+			});
 		});
 
 	});
 }
-setInterval(updateDMX, 45);
+setInterval(updateDMX, 10);
+
+
 
 var colorlist = {};
 var a = {};
 function advanceLightStage(light)
-{	
+{
 	var id = light.id;
 	var mode = light.mode;
 	if(mode=="rgbcycle")
@@ -64,7 +64,7 @@ function advanceLightStage(light)
 		if(a[id]==undefined || a[id]>=numStages)
 			a[id]=0;
 
-		for (i = 0; i < numStages; i++) { 
+		for (i = 0; i < numStages; i++) {
     		if(a[id]%numStages==i)
 				utils.setRGBW(light, anim.frames[i].colors);
 		}
@@ -85,32 +85,30 @@ function lightModeWatcher()
 
     		if(mode=="manual")
     		{
-				//utils.setRGBW(light,light.params.colors);
-    			//if(light.colors.w!=undefined)//if it supports white
-    			//	setWhite(light,light.params.colors.w);
+				utils.setRGBW(light,light.params.colors);
     		}
-    		//utils.setDimmer(light, light.params.dimmer);
-			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
-			{
-				timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
-			}
-			else if(timerlist[key] && mode=="manual")//switch back to manual mode
-			{
-				clearInterval(timerlist[key]);
-				timerlist[key]=null;//reset the timer
-			}
-			if(JSON.stringify(lightObjs[light.id]) != JSON.stringify(light))
-			{
-				//the light config changed
-				if(mode!="manual")
-				{
-					//restart the intervaller because light obj has updated
-					clearInterval(timerlist[key]);
-					timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
-				}
-			}
-			lightObjs[light.id] = light;
+            // utils.setDimmer(light, light.params.dimmer);
+			// if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
+			// {
+			// 	timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
+			// }
+			// else if(timerlist[key] && mode=="manual")//switch back to manual mode
+			// {
+			// 	clearInterval(timerlist[key]);
+			// 	timerlist[key]=null;//reset the timer
+			// }
+			// if(JSON.stringify(lightObjs[light.id]) != JSON.stringify(light))
+			// {
+			// 	//the light config changed
+			// 	if(mode!="manual")
+			// 	{
+			// 		//restart the intervaller because light obj has updated
+			// 		clearInterval(timerlist[key]);
+			// 		timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
+			// 	}
+			// }
+			//lightObjs[light.id] = light;
 		});
 	});
 }
- setInterval(lightModeWatcher, 5);
+ //setInterval(lightModeWatcher, 50);

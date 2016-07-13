@@ -117,7 +117,7 @@ module.exports = {
   ],
   "ola_server": 
   {
-    "ip": "10.0.1.91",
+    "ip": "localhost",
     "port": 9090
   }
 };
