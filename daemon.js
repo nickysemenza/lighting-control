@@ -1,6 +1,7 @@
 var redis = require("redis");
 var client = redis.createClient();
 var request = require('request');
+var utils = require('./utils');
 var settings = require('./settings');
 var animations = require('./animations');
 var Color = require("color");
@@ -8,16 +9,18 @@ client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-
-
 console.log("running!");
+utils.test();
+/**
+ * Updates OLA DMX based on redis light-settings dict
+ */
 function updateDMX()
 {
 	[2,3].map( function(uni) 
 	{
 		var vals = [];
 		client.hgetall("dmx-vals:"+uni, function (err, obj) {
-			Object.keys(obj).forEach( key => {
+			Object.keys(obj).forEach( function(key) {
 				vals[key]=obj[key];
 			});
 			var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
@@ -38,64 +41,7 @@ function updateDMX()
 }
 setInterval(updateDMX, 45);
 
-function setRGBW(light,colorArray, time)
-{
-	time = time || 0;
-	['r','g','b','w'].map(function(c)
-	{
-		var value = colorArray[c];
-		var channel = light.colors[c];
-		if(value != undefined && channel != undefined) {
-			//client.hset("dmx-vals:" + light.universe, channel, value);
-			client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
-				var current = parseInt(obj);
-				if(current!=value) {
-					console.log("calling fadeChannelChange on channel",channel);
-					fadeChannelChange(channel, light.universe, current, value, time);
-				}
-			});
-		}
-	});
-
-}
-function setDimmer(light,value,time)
-{
-	time = time || 0;
-	var channel = light.dimmer;
-	if(channel!=null)
-	{
-		client.hget("dmx-vals:"+light.universe, channel, function (err, obj) {
-		var current = parseInt(obj);
-		if(current!=value)
-			fadeChannelChange(channel,light.universe,current,value,time);
-		});	
-	}
-		// client.hset("dmx-vals", channel, value);
-}
-/*
-* channelNum - the channel number to alter the value of
-* uni - the universe the channel is in
-* current - the current value
-* goal - the target dmx_values
-*/
-function fadeChannelChange(channelNum,uni,current,goal,timeLeft)
-{
-	if(timeLeft==0)//instant change
-		current=goal;
-	client.hset("dmx-vals:"+uni, channelNum, current);
-	if(current == goal)//reached the goal
-		return;
-	var timing = timeLeft/Math.abs(goal-current);
-	var nextVal;
-	if(goal > current)
-		nextVal=current+1;
-	else
-		nextVal=current-1;
-	console.log(channelNum+"@"+current+"->"+goal+ "| "+timeLeft);
-	setTimeout(fadeChannelChange, timing, channelNum,uni,nextVal,goal, timeLeft-timing);
-}
 var colorlist = {};
-
 var a = {};
 function advanceLightStage(light)
 {	
@@ -107,7 +53,7 @@ function advanceLightStage(light)
 			colorlist[id] = Color({r:0, g: 255, b: 0});
 		var c = colorlist[id];
 
-		setRGBW(light,{r: c.red(),g: c.green(),b: c.blue()});
+		utils.setRGBW(light,{r: c.red(),g: c.green(),b: c.blue()});
 		c.rotate(light.params.step);//go to next color
 	}
 	if(mode=="rgbjump" || mode=="strobe")
@@ -120,24 +66,11 @@ function advanceLightStage(light)
 
 		for (i = 0; i < numStages; i++) { 
     		if(a[id]%numStages==i)
-				setRGBW(light, anim.frames[i].colors);
+				utils.setRGBW(light, anim.frames[i].colors);
 		}
 		a[id]++;
 	}
 }
-
-
-
-client.hgetall("light-settings", function (err, obj) {
-	Object.keys(obj).forEach( key => {
-		var light = JSON.parse(obj[key]);
-		setRGBW(light,{r:255,g:255,b:255,w:255},100);
-		//setRGBW(light,{r:0},100);
-		//setRGBW(light,{g:255},100);
-	});
-});
-
-
 
 
 var timerlist = {};
@@ -145,18 +78,18 @@ var lightObjs = {};
 function lightModeWatcher()
 {
 	client.hgetall("light-settings", function (err, obj) {
-    Object.keys(obj).forEach( key => {
+    Object.keys(obj).forEach( function(key) {
     		var light = JSON.parse(obj[key]);
     		var mode = light.mode;
     		// console.log(key, obj[key]);
 
     		if(mode=="manual")
     		{
-    			setRGBW(light,light.params.colors);
+				//utils.setRGBW(light,light.params.colors);
     			//if(light.colors.w!=undefined)//if it supports white
     			//	setWhite(light,light.params.colors.w);
     		}
-    		setDimmer(light, light.params.dimmer);
+    		//utils.setDimmer(light, light.params.dimmer);
 			if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
 			{
 				timerlist[key] = setInterval( function() { advanceLightStage(light); }, light.params.cycle_period );
@@ -180,4 +113,4 @@ function lightModeWatcher()
 		});
 	});
 }
- //setInterval(lightModeWatcher, 5);
+ setInterval(lightModeWatcher, 5);
