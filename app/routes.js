@@ -1,4 +1,5 @@
 var settings = require('.././settings');
+var utils = require('.././utils');
 var redis = require("redis");
 var client = redis.createClient();
 client.on("error", function (err) {
@@ -63,7 +64,26 @@ module.exports = function(app) {
 
 		ress.json("ok");
 	});
+	app.put('/c/:id/', function(req,res)
+	{
+		var id = req.params.id;
+		var l = req.body;
+		// res.json(l);
 
+		utils
+			.getLightByID(id)
+			.then(function(light)
+			{
+				utils.setRGBW(light,
+					l,
+					req.body.t || 0
+				).then(
+					function()
+					{
+						res.json('ok')
+					});
+			});
+	});
 	app.get('/dmx', function(req, res) {
 		r = [];
 		client.hgetall("dmx-vals:2", function (err, obj) {
