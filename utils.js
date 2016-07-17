@@ -1,6 +1,7 @@
 var redis = require("redis");
 var client = redis.createClient();
 var bluebird = require("bluebird");
+var colors = require('colors/safe');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
@@ -37,8 +38,8 @@ function setRGBW(light,colorArray, time)
 {
     time = time || 0;
     return new Promise(function(resolve, reject) {
-        setDimmer(light,255,0);
-        console.log('setRGBW', light.id, light.name, colorArray);
+        //setDimmer(light,255,0);
+        console.log(colors.black.underline('setRGBW'), light.name+"("+light.id+")","timing:"+time, colorArray, colors.red(Date.now()));
         ['r', 'g', 'b', 'w'].map(function (c) {
             var value = colorArray[c];
             var channel = light.colors[c];
@@ -86,10 +87,54 @@ function getLightByID(id)
     });
 }
 
+function processCue(cue)
+{
+    var numActions = cue.actions.length;
+    console.log(colors.bgBlue('processcue called, '+numActions+" actions"));
+    processCueAction(cue,0,numActions);
+    //console.log(typeof(cue.actions));
+    // for(var i in cue.actions)
+    // {
+    //     var each = cue.actions[i];
+    //     console.log("beforepromise",each.colors);
+    //     getLightByID(each.light)
+    //         .then(function(light)
+    //         {
+    //             // console.log('yay');
+    //             console.log(colors.blue("---processCue-----light #"+light.id+"-------"));
+    //             console.log(colors.green("test1"), each.colors);
+    //             setRGBW(light,each.colors,each.timing);
+    //             console.log(colors.yellow("---------------------------------"));
+    //
+    //         })
+    // }
+}
+function processCueAction(cue, actionNum, numActions)
+{
+    console.log('received action #'+actionNum);
+
+        var each = cue.actions[actionNum];
+        console.log("beforepromise",each.colors);
+        getLightByID(each.light)
+        .then(function(light)
+        {
+            // console.log('yay');
+            console.log(colors.blue("---processCue-----light #"+light.id+"-------"));
+            console.log(colors.green("test1"), each.colors);
+            setRGBW(light,each.colors,each.timing);
+            console.log(colors.yellow("---------------------------------"));
+            var nextActionNum = actionNum+1;
+            console.log(nextActionNum, numActions);
+            if(nextActionNum<=numActions-1)
+                processCueAction(cue, nextActionNum, numActions);
+
+        })
+}
 module.exports = {
     fadeChannelChange: fadeChannelChange,
     setRGBW: setRGBW,
     setDimmer: setDimmer,
-    getLightByID: getLightByID
+    getLightByID: getLightByID,
+    processCue: processCue
     // renderPost: function(postName) { ... }
 };

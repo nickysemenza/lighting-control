@@ -1,6 +1,8 @@
 var settings = require('.././settings');
 var utils = require('.././utils');
 var redis = require("redis");
+var colors = require('colors');
+
 var client = redis.createClient();
 client.on("error", function (err) {
     console.log("Error " + err);
@@ -45,10 +47,45 @@ module.exports = function(app) {
 			});
 		});
 
+
+	// app.get('/q', function(req, res) {
+	// 	var cue = {
+	// 		"actions": [
+	// 			{
+	// 				"light": "1",
+	// 				"colors": {
+	// 					"r": "0",
+	// 					"g": "255",
+	// 					"b": "0"
+	// 				},
+	// 				"timing": "1000"
+	// 			},
+	// 			{
+	// 				"light": "2",
+	// 				"colors": {
+	// 					"r": "0",
+	// 					"g": "0",
+	// 					"b": "0"
+	// 				},
+	// 				"timing": "1000"
+	// 			}
+	// 		],
+	// 		"wait": "100"
+	// 	};
+    //
+	// 	utils.processCue(cue);
+	// 	res.json('ok');
+	// });
+
+
 	app.put('/q', function(req, res) {
-		client.lpush('queue', JSON.stringify(req.body))
-		res.json("yay");
+		console.log(req.body);
+		client.rpush('queue', JSON.stringify(req.body), function(err, obj) {
+			res.json(obj);
+		})
+
 	});
+
 		
 
 	app.put('/channels', function(req, res) {

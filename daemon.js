@@ -5,6 +5,8 @@ var utils = require('./utils');
 var settings = require('./settings');
 var animations = require('./animations');
 var Color = require("color");
+var colors = require('colors/safe');
+
 
 client.on("error", function (err) {
     console.log("Error " + err);
@@ -15,7 +17,7 @@ console.log("running daemon!");
  * Updates OLA DMX based on redis light-settings dict
  */
 function updateDMX() {
-	[2, 3].map(function(uni) {
+	[2].map(function(uni) {
 		var vals = [];
 		client.hgetall("dmx-vals:" + uni, function(err, obj) {
 			Object.keys(obj).forEach(function(key) {
@@ -37,7 +39,7 @@ function updateDMX() {
 
 	});
 }
-setInterval(updateDMX, 10);
+setInterval(updateDMX, 5);
 
 
 
@@ -112,3 +114,25 @@ function lightModeWatcher()
 	});
 }
  //setInterval(lightModeWatcher, 50);
+
+function watchQueue()
+{
+	client.lpop("queue", function (err, obj) {
+		//console.log("pop the queue");
+		//console.log("QUEUE ENTRY", JSON.parse(obj));
+		if(obj==null)
+		{
+			//console.log('empty queue');
+			setTimeout(watchQueue, 50);
+		}
+		else
+		{
+			utils.processCue(JSON.parse(obj));
+			console.log(colors.yellow("WAITING FOR: "+JSON.parse(obj).wait)+" TO CHECK THE QUEUE AGAIN");
+			setTimeout(watchQueue, JSON.parse(obj).wait);
+		}
+	});
+}
+watchQueue();
+
+
