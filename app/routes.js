@@ -3,11 +3,25 @@ var utils = require('.././utils');
 var redis = require("redis");
 var colors = require('colors');
 
+var bluebird = require("bluebird");
+
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
+
 var client = redis.createClient();
 client.on("error", function (err) {
     console.log("Error " + err);
 });
 module.exports = function(app) {
+
+	app.all('/*', function(req, res, next) {
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Headers", "content-type");
+		res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
+		next();
+	});
 
 	app.get('/lights', function(req, res) {
 		//res.json(settings.fixtures);
@@ -47,42 +61,29 @@ module.exports = function(app) {
 			});
 		});
 
-
-	// app.get('/q', function(req, res) {
-	// 	var cue = {
-	// 		"actions": [
-	// 			{
-	// 				"light": "1",
-	// 				"colors": {
-	// 					"r": "0",
-	// 					"g": "255",
-	// 					"b": "0"
-	// 				},
-	// 				"timing": "1000"
-	// 			},
-	// 			{
-	// 				"light": "2",
-	// 				"colors": {
-	// 					"r": "0",
-	// 					"g": "0",
-	// 					"b": "0"
-	// 				},
-	// 				"timing": "1000"
-	// 			}
-	// 		],
-	// 		"wait": "100"
-	// 	};
-    //
-	// 	utils.processCue(cue);
-	// 	res.json('ok');
-	// });
-
-
 	app.put('/q', function(req, res) {
-		console.log(req.body);
-		client.rpush('queue', JSON.stringify(req.body), function(err, obj) {
-			res.json(obj);
-		})
+		var multipleCues = req.body instanceof Array;
+		// console.log("mutliple cues?", multipleCues);
+		// console.log("---------------");
+		if(multipleCues)
+		{
+			console.log(colors.bgBlack(req.body.length+" cues received"));
+			var aaa = [];
+			for(x in req.body)
+			{
+				aaa.push(client.rpushAsync('queue', JSON.stringify(req.body[x])));
+				Promise.all(aaa).then(function() {
+					res.json('done');
+				});
+			}
+		}
+		else
+		{
+			console.log(colors.bgBlack("1 cue received"));
+			client.rpush('queue', JSON.stringify(req.body), function(err, obj) {
+				res.json(obj);
+			})
+		}
 
 	});
 

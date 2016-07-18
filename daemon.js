@@ -113,7 +113,7 @@ function lightModeWatcher()
 		});
 	});
 }
- //setInterval(lightModeWatcher, 50);
+ setInterval(lightModeWatcher, 150);
 
 function watchQueue()
 {
