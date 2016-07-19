@@ -92,8 +92,14 @@ function getLightByID(id)
 function processCue(cue)
 {
     var numActions = cue.actions.length;
-    console.log(colors.bgBlue('processcue called, '+numActions+" actions"));
-    processCueAction(cue,0,numActions);
+    promises = [];
+    promises.push(client.hincrbyAsync('light-stats','queue_processed',1));
+    promises.push(client.hincrbyAsync('light-stats','queue_actions_processed',numActions));
+    Promise.all(promises).then(function() {
+        console.log(colors.bgBlue('processcue called, '+numActions+" actions"));
+        processCueAction(cue,0,numActions);
+    });
+
 }
 /**
  * Recursive processing of cue actions

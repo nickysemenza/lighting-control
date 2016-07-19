@@ -33,6 +33,14 @@ module.exports = function(app) {
 		   res.json(r);
 		});	
 	});
+	/**
+	 * JSON obj of stats hmap
+	 */
+	app.get('/stats', function(req, res) {
+		client.hgetall("light-stats", function (err, obj) {
+			res.json(obj);
+		});
+	});
 	app.get('/lights/:id', function(req, res) {
 		var id = req.params.id;
 
@@ -61,27 +69,34 @@ module.exports = function(app) {
 			});
 		});
 
+	/**
+	 * Receives a cue and adds it to redis
+	 */
 	app.put('/q', function(req, res) {
 		var multipleCues = req.body instanceof Array;
-		// console.log("mutliple cues?", multipleCues);
-		// console.log("---------------");
 		if(multipleCues)
 		{
-			console.log(colors.bgBlack(req.body.length+" cues received"));
+			var numCues = req.body.length;
+			console.log(colors.bgBlack(numCues+" cues received"));
 			var aaa = [];
 			for(x in req.body)
 			{
 				aaa.push(client.rpushAsync('queue', JSON.stringify(req.body[x])));
-				Promise.all(aaa).then(function() {
-					res.json('done');
-				});
+
 			}
+			aaa.push(client.hincrbyAsync('light-stats','queue_received',numCues));
+			Promise.all(aaa).then(function() {
+				res.json('ok');
+			});
+
 		}
 		else
 		{
 			console.log(colors.bgBlack("1 cue received"));
 			client.rpush('queue', JSON.stringify(req.body), function(err, obj) {
-				res.json(obj);
+				client.hincrby('stats','queue_received',1, function(err, obj){
+					res.json('ok');
+				});
 			})
 		}
 
