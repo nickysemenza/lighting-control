@@ -16,6 +16,9 @@ client.on("error", function (err) {
 });
 module.exports = function(app) {
 
+	/**
+	 * CORS headers
+	 */
 	app.all('/*', function(req, res, next) {
 		res.header("Access-Control-Allow-Origin", "*");
 		res.header("Access-Control-Allow-Headers", "content-type");
@@ -24,7 +27,6 @@ module.exports = function(app) {
 	});
 
 	app.get('/lights', function(req, res) {
-		//res.json(settings.fixtures);
 		r = [];
 		client.hgetall("light-settings", function (err, obj) {
 		   Object.keys(obj).forEach( function(key) {
@@ -104,15 +106,15 @@ module.exports = function(app) {
 
 		
 
-	app.put('/channels', function(req, res) {
-		for (var propName in req.query) {
-		    if (req.query.hasOwnProperty(propName)) {
-		        console.log(propName, req.query[propName]);
-		        client.hset("dmx-vals", propName, req.query[propName]);
-		    }
-		}
-		res.json("ok");
-	});
+	// app.put('/channels', function(req, res) {
+	// 	for (var propName in req.query) {
+	// 	    if (req.query.hasOwnProperty(propName)) {
+	// 	        console.log(propName, req.query[propName]);
+	// 	        client.hset("dmx-vals", propName, req.query[propName]);
+	// 	    }
+	// 	}
+	// 	res.json("ok");
+	// });
 	app.get('/reset', function(req, res) {
 		settings.fixtures.forEach(function(l)
 		{

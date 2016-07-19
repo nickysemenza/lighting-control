@@ -87,7 +87,7 @@ function lightModeWatcher()
 
     		if(mode=="manual")
     		{
-				utils.setRGBW(light,light.params.colors);
+				//utils.setRGBW(light,light.params.colors);
     		}
             // utils.setDimmer(light, light.params.dimmer);
 			// if(!timerlist[key] && mode!="manual")//timer doesn't exist yet
