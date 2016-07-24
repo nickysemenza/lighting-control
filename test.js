@@ -10,12 +10,22 @@ var request = require('request');
  * R - example chained animations
  * @param sequence
  */
+var currentLight = 1;
 function evaluateKeyPress(sequence) {
     var globalTiming = 200;
     var globalWait = 300;
 
+
+
     switch(sequence)
     {
+
+        case "i":
+            currentLight = 1;
+            break;
+        case "o":
+            currentLight = 2;
+            break;
         case "q":
             request({
                 url: 'http://localhost:8081/q',
@@ -23,7 +33,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "r": "255"
                             },
@@ -41,7 +51,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "g": "255",
                             },
@@ -59,7 +69,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "b": "255"
                             },
@@ -77,7 +87,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "r": "120"
                             },
@@ -95,7 +105,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "g": "120",
                             },
@@ -113,7 +123,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "b": "120"
                             },
@@ -131,7 +141,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "r": "0"
                             },
@@ -149,7 +159,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "g": "0",
                             },
@@ -167,7 +177,7 @@ function evaluateKeyPress(sequence) {
                 json:     {
                     "actions": [
                         {
-                            "light": "1",
+                            "light": currentLight,
                             "colors": {
                                 "b": "0"
                             },

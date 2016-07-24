@@ -96,7 +96,7 @@ module.exports = function(app) {
 		{
 			console.log(colors.bgBlack("1 cue received"));
 			client.rpush('queue', JSON.stringify(req.body), function(err, obj) {
-				client.hincrby('stats','queue_received',1, function(err, obj){
+				client.hincrby('light-stats','queue_received',1, function(err, obj){
 					res.json('ok');
 				});
 			})
