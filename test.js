@@ -13,7 +13,7 @@ var request = require('request');
 var currentLight = 1;
 function evaluateKeyPress(sequence) {
     var globalTiming = 200;
-    var globalWait = 300;
+    var globalWait = 0;
 
 
 
@@ -22,9 +22,11 @@ function evaluateKeyPress(sequence) {
 
         case "i":
             currentLight = 1;
+            console.log("current light set to"+1);
             break;
         case "o":
             currentLight = 2;
+            console.log("current light set to"+2);
             break;
         case "q":
             request({

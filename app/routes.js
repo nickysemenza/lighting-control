@@ -26,14 +26,11 @@ module.exports = function(app) {
 		next();
 	});
 
+	/**
+	 * Gets a list of all lights
+     */
 	app.get('/lights', function(req, res) {
-		r = [];
-		client.hgetall("light-settings", function (err, obj) {
-		   Object.keys(obj).forEach( function(key) {
-		   	r.push(JSON.parse(obj[key]));
-		   });
-		   res.json(r);
-		});	
+		res.json(settings.fixtures);
 	});
 	/**
 	 * JSON obj of stats hmap
@@ -43,36 +40,8 @@ module.exports = function(app) {
 			res.json(obj);
 		});
 	});
-	app.get('/lights/:id', function(req, res) {
-		var id = req.params.id;
-
-		client.hget("light-settings", id, function (err, obj) {
-		   res.json(JSON.parse(obj));
-		});		
-	});
-
-	app.put('/lights/:id', function(req, res) {
-		var id = req.params.id;
-		var l = req.body;
-		client.hget("light-settings", id, function (err, obj) {
-		   light = JSON.parse(obj);
-
-		   for (key in l)
-				{
-					// console.log(key, l[key]);
-					if(key=="mode")
-						light.mode = l[key];
-					if(key=="params")
-						light.params = l[key];
-				}	
-				client.hset("light-settings", id, JSON.stringify(light), function (err, obj) {
-				   res.json(light);
-				});	
-			});
-		});
-
 	/**
-	 * Receives a cue and adds it to redis
+	 * Receives a cue and adds it to redis queue
 	 */
 	app.put('/q', function(req, res) {
 		var multipleCues = req.body instanceof Array;
@@ -81,7 +50,7 @@ module.exports = function(app) {
 			var numCues = req.body.length;
 			console.log(colors.bgBlack(numCues+" cues received"));
 			var aaa = [];
-			for(x in req.body)
+			for(var x in req.body)
 			{
 				aaa.push(client.rpushAsync('queue', JSON.stringify(req.body[x])));
 
@@ -103,53 +72,12 @@ module.exports = function(app) {
 		}
 
 	});
-
-		
-
-	// app.put('/channels', function(req, res) {
-	// 	for (var propName in req.query) {
-	// 	    if (req.query.hasOwnProperty(propName)) {
-	// 	        console.log(propName, req.query[propName]);
-	// 	        client.hset("dmx-vals", propName, req.query[propName]);
-	// 	    }
-	// 	}
-	// 	res.json("ok");
-	// });
-	app.get('/reset', function(req, res) {
-		settings.fixtures.forEach(function(l)
-		{
-			client.hset("light-settings", l.id, JSON.stringify(l), redis.print);
-		});
-
-		ress.json("ok");
-	});
-	app.put('/c/:id/', function(req,res)
-	{
-		// console.log(Date.now());
-		var id = req.params.id;
-		var rgbwvals = req.body;
-
-		utils
-			.getLightByID(id)
-			.then(function(light)
-			{
-				utils.setRGBW(light,
-					rgbwvals,
-					req.body.t || 0
-				).then(
-					function()
-					{
-						res.json('ok')
-					});
-			});
-	});
 	app.get('/dmx', function(req, res) {
 		r = [];
 		client.hgetall("dmx-vals:2", function (err, obj) {
 		   res.json(obj);
 		});	
 	});
-
 	app.get('*', function(req, res) {
 		//serve angular
 		res.sendfile('./public/index.html');

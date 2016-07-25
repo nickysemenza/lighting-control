@@ -8,19 +8,6 @@ module.exports = {
       "channels": 8,
       "start": 1,
       "end": 8,
-      "modes":["manual","rgbcycle","rgbjump","strobe"],
-      "mode": "rgbcycle",
-      "params": {
-        "dimmer": 255,
-        "step": 20,
-        "cycle_period": 300,
-        "colors": {
-            "r": "0",
-            "g": "0",
-            "b": "0",
-            "w": "0",
-        }
-      },
       "has_dimmer": true,
       "dimmer": 1,
       "colors": {
@@ -38,19 +25,6 @@ module.exports = {
       "channels": 8,
       "start": 11,
       "end": 18,
-      "modes":["manual","rgbcycle","rgbjump","strobe"],
-      "mode": "rgbcycle",
-      "params": {
-        "dimmer": 255,
-        "step": 20,
-        "cycle_period": 300,
-        "colors": {
-            "r": "0",
-            "g": "0",
-            "b": "0",
-            "w": "0"
-        }
-      },
       "has_dimmer": true,
       "dimmer": 11,
       "colors": {
@@ -61,57 +35,18 @@ module.exports = {
       }
     },
     {
-      "id": 4,
+      "id": 3,
       "name": "rgb - strip #1",
       "type": "strip",
       "universe": 3,
       "channels": 3,
       "start": 40,
       "end": 42,
-      "modes":["manual","rgbcycle"],
-      "mode": "manual",
-      "params": {
-        "dimmer": 255,
-        "step": 20,
-        "cycle_period": 300,
-        "colors": {
-            "r": "0",
-            "g": "0",
-            "b": "0"
-        }
-      },
       "has_dimmer": false,
       "colors": {
         "r": 1,
         "g": 2,
-        "b": 3,
-      }
-    },
-    {
-      "id": 5,
-      "name": "rgb - strip #2",
-      "type": "strip",
-      "universe": 3,
-      "channels": 3,
-      "start": 40,
-      "end": 42,
-      "modes":["manual","rgbcycle"],
-      "mode": "manual",
-      "params": {
-        "dimmer": 255,
-        "step": 20,
-        "cycle_period": 300,
-        "colors": {
-            "r": "0",
-            "g": "0",
-            "b": "0"
-        }
-      },
-      "has_dimmer": false,
-      "colors": {
-        "r": 4,
-        "g": 5,
-        "b": 6,
+        "b": 3
       }
     }
   ],
@@ -119,5 +54,6 @@ module.exports = {
   {
     "ip": "localhost",
     "port": 9090
-  }
+  },
+  "verbose": true
 };
