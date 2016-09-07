@@ -1,9 +1,10 @@
 module.exports = {
-  "fixtures": [
-    {
+  "fixtures": {
+    "1": {
       "id": 1,
       "name": "desk",
       "type": "rgbw",
+      "protocol": "dmx",
       "universe": 2,
       "channels": 8,
       "start": 1,
@@ -17,10 +18,11 @@ module.exports = {
         "w": 8
       }
     },
-    {
+    "2": {
       "id": 2,
       "name": "bookcase",
       "type": "rgbw",
+      "protocol": "dmx",
       "universe": 2,
       "channels": 8,
       "start": 11,
@@ -34,24 +36,31 @@ module.exports = {
         "w": 18
       }
     },
-    {
+    "3": {
       "id": 3,
       "name": "rgb - strip #1",
       "type": "strip",
+      "protocol": "dmx",
       "universe": 3,
       "channels": 3,
-      "start": 40,
-      "end": 42,
+      "start": 1,
+      "end": 3,
       "has_dimmer": false,
       "colors": {
         "r": 1,
         "g": 2,
         "b": 3
       }
+    },
+    "11": {
+      "id": 11,
+      "name": "hue 1",
+      "type": "color",
+      "protocol": "hue",
+      "hue_id": 1
     }
-  ],
-  "ola_server": 
-  {
+  },
+  "ola_server": {
     "ip": "localhost",
     "port": 9090
   },

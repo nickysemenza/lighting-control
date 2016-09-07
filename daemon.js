@@ -17,7 +17,7 @@ console.log("running daemon!");
  * todo: multiple universes
  */
 function updateDMX() {
-	[2].map(function(uni) {
+	[2,3].map(function(uni) {
 		var vals = [];
 		client.hgetall("dmx-vals:" + uni, function(err, obj) {
 			Object.keys(obj).forEach(function(key) {

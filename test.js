@@ -19,14 +19,21 @@ function evaluateKeyPress(sequence) {
 
     switch(sequence)
     {
-
-        case "i":
+        case "u":
             currentLight = 1;
             console.log("current light set to"+1);
             break;
-        case "o":
+        case "i":
             currentLight = 2;
             console.log("current light set to"+2);
+            break;
+        case "o":
+            currentLight = 3;
+            console.log("current light set to"+3);
+            break;
+        case "p":
+            currentLight = 11;
+            console.log("current light set to"+11);
             break;
         case "q":
             request({
@@ -211,6 +218,15 @@ function evaluateKeyPress(sequence) {
                                 "r": "255",
                                 "g": "0",
                                 "b": "0"
+                            },
+                            "timing": "200"
+                        },
+                        {
+                            "light": "11",
+                            "colors": {
+                                "r": "255",
+                                "g": "255",
+                                "b": "255"
                             },
                             "timing": "200"
                         }

@@ -6,6 +6,22 @@ var settings = require('./settings');
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
+
+var hue = require("node-hue-api"),
+    HueApi = hue.HueApi,
+    hue_lightState = hue.lightState;
+
+
+var hue_host = "10.0.0.212",
+    hue_username = "CtL7kpP4TUjhyiaGD-0BxtcLxAQZ55PyZ6nMXdE9",
+    hue_api = new HueApi(hue_host, hue_username),
+    hue_state;
+
+var displayResult = function(result) {
+    console.log(JSON.stringify(result, null, 2));
+};
+
+
 /**
  * animates the change in a channel value
  *
@@ -40,7 +56,13 @@ function setRGBW(light,colorArray, time)
     return new Promise(function(resolve, reject) {
         //setDimmer(light,255,0);
         if(settings.verbose)
-            console.log(colors.black.underline('setRGBW'), light.name+"("+light.id+")","timing:"+time, colorArray, colors.red(Date.now()));
+            console.log(colors.black.underline('setRGBW'), light.name+" ( "+light.protocol+" #"+light.id+")","timing:"+time, colorArray, colors.red(Date.now()));
+        
+            if(light.protocol=="hue"){
+                setHueRGB(light.hue_id,colorArray);
+                resolve('ok');
+            }
+
         ['r', 'g', 'b', 'w'].map(function (c) {
             var value = colorArray[c];
             var channel = light.colors[c];
@@ -81,7 +103,7 @@ function setDimmer(light,value,time)
  */
 function getLightByID(id)
 {
-    return settings.fixtures[id-1];//todo: make settings object, not array
+    return settings.fixtures[id];//todo: make settings object, not array
 }
 /**
  * Processes a cue
@@ -112,12 +134,18 @@ function processCueAction(cue, actionNum, numActions)
     var each = cue.actions[actionNum];
     var light = getLightByID(each.light);
     if(settings.verbose)
-        console.log(colors.blue("---processCue-----light #"+light.id+"-------"));
+        console.log(colors.blue("---processCue-----light #"+light.id+"---protocol:"+light.protocol+"----"));
     setRGBW(light,each.colors,each.timing);
     var nextActionNum = actionNum+1;
     if(nextActionNum <= numActions-1)//if we need to keep going
         processCueAction(cue, nextActionNum, numActions);
 
+}
+function setHueRGB(hue_light_id, colorArray) {
+    var r = colorArray.r;
+    var g = colorArray.g;
+    var b = colorArray.b;
+    hue_api.setLightState(hue_light_id, hue_lightState.create().on().transitionTime().rgb(r,g,b).bri(255)).then(displayResult).done();
 }
 module.exports = {
     processCue: processCue
