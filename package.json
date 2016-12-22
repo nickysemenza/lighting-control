@@ -9,7 +9,7 @@
   "author": "Nicky Semenza <nicky@nickysemenza.com> (http://nickysemenza.com/)",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.4.1",
+    "bluebird": "^3.4.7",
     "body-parser": "^1.15.0",
     "color": "^1.0.0",
     "colors": "^1.1.2",
