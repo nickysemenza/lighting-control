@@ -24,21 +24,21 @@
 //     console.log(error.stack);
 //   });
 
-var hue = require("node-hue-api"),
-    HueApi = hue.HueApi,
-    hue_lightState = hue.lightState;
+let hue = require('node-hue-api'),
+  HueApi = hue.HueApi,
+  hue_lightState = hue.lightState;
 
 
-var hue_host = "10.0.0.212",
-    hue_username = "CtL7kpP4TUjhyiaGD-0BxtcLxAQZ55PyZ6nMXdE9",
-    hue_api = new HueApi(hue_host, hue_username),
-    hue_state;
+let hue_host = '10.0.0.212',
+  hue_username = 'CtL7kpP4TUjhyiaGD-0BxtcLxAQZ55PyZ6nMXdE9',
+  hue_api = new HueApi(hue_host, hue_username),
+  hue_state;
 
-var displayResult = function(result) {
-    console.log(JSON.stringify(result, null, 2));
+const displayResult = function (result) {
+  console.log(JSON.stringify(result, null, 2));
 };
 
-hue_api.setLightState(1, hue_lightState.create().on().transitionTime(10).rgb(0,80,200).bri(255)).then(displayResult).done();
+hue_api.setLightState(1, hue_lightState.create().on().transitionTime(10).rgb(0, 80, 200).bri(255)).then(displayResult).done();
 
 // // --------------------------
 // // Using a callback
