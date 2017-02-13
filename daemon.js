@@ -17,14 +17,30 @@ console.log("running daemon!");
  * todo: multiple universes
  */
 function updateDMX() {
-	[2,3].map(function(uni) {
+	[3].map(function(uni) {
 		var vals = [];
 		client.hgetall("dmx-vals:" + uni, function(err, obj) {
 			Object.keys(obj).forEach(function(key) {
 				vals[key] = obj[key];
 			});
-			var dmx_values = vals.slice(1).join(); //make comma seperated array, but ignore 0 index
-			//console.log(uni, dmx_values.substring(0, 50));
+			var dmx_values = vals.slice(1);
+			//console.log(dmx_values);
+			var x = [];
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			dmx_values = dmx_values.concat(dmx_values);
+			console.log(x);
+			if(uni==3) {
+			//Array.prototype.push.apply(vals,vals)
+
+			}
+			dmx_values = dmx_values.join(); //make comma seperated array, but ignore 0 index
+			console.log(uni, dmx_values.substring(0, 50));
 			request.post({
 				url: 'http://' + settings.ola_server.ip + ':' + settings.ola_server.port + '/set_dmx',
 				form: {
