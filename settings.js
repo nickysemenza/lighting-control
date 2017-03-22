@@ -6,7 +6,7 @@ let settings =  {
   hue: {
     ip:'10.0.0.212' ,
     username:'CtL7kpP4TUjhyiaGD-0BxtcLxAQZ55PyZ6nMXdE9'
-  }
+  },
   verbose: true,
 };
 export default settings;
