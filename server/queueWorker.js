@@ -1,5 +1,5 @@
 import request from 'request';
-import settings from '../settings'
+import settings from './settings'
 import * as lightTypes from './consts';
 export function processQueue() {
     // console.log('processing')
@@ -18,7 +18,7 @@ function sendDMX() {
 
     Object.keys(lights).forEach(l=>{
         let light = lights[l];
-        if(light.type == lightTypes.LIGHT_TYPE_DMX_RGB) {
+        if(light.type == lightTypges.LIGHT_TYPE_DMX_RGB) {
             let lightVal = light.getDMXChannelValues();
             // console.log(lightVal);
 

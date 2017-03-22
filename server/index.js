@@ -3,7 +3,6 @@ import DMXRGBLight from './DMXRGBLight';
 import HueLight from './HueLight';
 import kue from 'kue';
 setInterval(processQueue, 5);
-console.log("hi");
 
 let l1 = new DMXRGBLight("l1",1,8,1);
 l1.fadeRGB(255,0,0,1000).then(()=>{
