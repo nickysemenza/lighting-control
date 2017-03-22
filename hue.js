@@ -38,7 +38,7 @@ const displayResult = function (result) {
   console.log(JSON.stringify(result, null, 2));
 };
 
-hue_api.setLightState(1, hue_lightState.create().on().transitionTime(10).rgb(0, 80, 200).bri(255)).then(displayResult).done();
+hue_api.setLightState(1, hue_lightState.create().on().transitionTime(5).rgb(200, 20, 12).bri(255)).then(displayResult).done();
 
 // // --------------------------
 // // Using a callback

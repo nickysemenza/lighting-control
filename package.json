@@ -4,7 +4,9 @@
   "description": "dmx lighting control",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "kue": "kue-dashboard -p 3050 -q lighting-q",
+    "redis-commander": "redis-commander",
+    "start": "nodemon src/index.js --exec babel-node"
   },
   "author": "Nicky Semenza <nicky@nickysemenza.com> (http://nickysemenza.com/)",
   "license": "ISC",
@@ -19,6 +21,7 @@
     "express": "^4.13.4",
     "huejay": "^1.2.3",
     "keypress": "^0.2.1",
+    "kue": "https://github.com/nickysemenza/kue",
     "node-hue-api": "^2.2.0",
     "redis": "^2.6.0-1",
     "request": "^2.70.0"
