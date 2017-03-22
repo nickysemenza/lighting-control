@@ -10,14 +10,16 @@ export default class DMXRGBLight extends Light {
     }
     getDMXChannelValues() {
         let values = {};
+        let human = {};
         Object.keys(this.profile).forEach(attr=>
         {
             let channel = this.profile[attr]+this.startAddress-1;
             values[channel] = Math.ceil(this[attr] ? this[attr] : 0);
+            human[channel] = {value: Math.ceil(this[attr]), channel: attr};
         });
-        return {universe: this.universe, values};
+        return {universe: this.universe, values, human};
     }
-    fadeRGB(...args) {
-        return super.fadeRGB(...args);
-    }
+    // fadeRGB(...args) {
+    //     return super.fadeRGB(...args);
+    // }
 }
