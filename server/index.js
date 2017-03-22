@@ -21,30 +21,34 @@ let h1 = new HueLight("desk",1);
 //     });
 //
 // });
-setTimeout(()=>{
-    h1.fadeRGB(0,0,250,1000).then(()=>{
-        console.log("1s");
-        h1.fadeRGB(255,0,0,2000)
-            .then(()=>{console.log("fin")})
-    });
-    l1.fadeRGB(0,0,255,1000).then(()=>{
-        console.log("FADED4");
-        l1.fadeRGB(254,121,0,2000).then(()=>{
-            console.log("FADED4");
-        });
-        l2.fadeRGB(255,19,120,500,1200).then(()=>{
-            console.log("FADED4");
-            l2.fadeRGB(0,38,86,10).then(()=>{
-                console.log("FADED4");
-            });
-        });
-    });
-    setTimeout(()=>{
-        // l1.fadeRGB(255,0,0,500).then(()=>{
-        //     console.log("FADED4");
-        // });
-    },500)
-},2000);
+
+
+
+l1.strobe(30,2000).then(()=>{console.log("ok")});
+// setTimeout(()=>{
+//     h1.fadeRGB(0,0,250,1000).then(()=>{
+//         console.log("1s");
+//         h1.fadeRGB(255,0,0,2000)
+//             .then(()=>{console.log("fin")})
+//     });
+//     l1.fadeRGB(0,0,255,1000).then(()=>{
+//         console.log("FADED4");
+//         l1.fadeRGB(254,121,0,2000).then(()=>{
+//             console.log("FADED4");
+//         });
+//         l2.fadeRGB(255,19,120,500,1200).then(()=>{
+//             console.log("FADED4");
+//             l2.fadeRGB(0,38,86,0).then(()=>{
+//                 console.log("FADED4");
+//             });
+//         });
+//     });
+//     setTimeout(()=>{
+//         // l1.fadeRGB(255,0,0,500).then(()=>{
+//         //     console.log("FADED4");
+//         // });
+//     },500)
+// },2000);
 
 //
 

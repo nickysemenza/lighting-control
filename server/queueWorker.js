@@ -21,7 +21,7 @@ function sendDMX() {
         let light = lights[l];
         if(light.type == consts.LIGHT_TYPE_DMX_RGB) {
             let lightVal = light.getDMXChannelValues();
-            console.log(lightVal);
+            // console.log(lightVal);
 
             Object.keys(lightVal.values).forEach(v=>{
                 DMX[lightVal.universe][v] = lightVal.values[v];

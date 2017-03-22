@@ -50,7 +50,7 @@ export default class Light {
             let deltaR = r-this.r;
             let deltaG = g-this.g;
             let deltaB = b-this.b;
-            console.log(`going to fade, deltas are: ${deltaR},${deltaG},${deltaB},\n we will have ${numFrames}frames at ${frameLength}ms each, animation is ${duration}ms long, wait for ${afterWait}ms after`);
+            console.log(`[light ${this.name}, action #${this.actionID}\n\tRGB fade, deltas are: ${deltaR},${deltaG},${deltaB},\n\twe will have ${numFrames}frames at ${frameLength}ms each, animation is ${duration}ms long, wait for ${afterWait}ms after`);
             let processFade = new Promise((resolveDo, reject)=>{
                 this.doRGBFade(deltaR,deltaG,deltaB,frameLength,numFrames,1,resolveDo,actionIDAtStart);
             });
@@ -59,9 +59,25 @@ export default class Light {
                 this.r = r;
                 this.g = g;
                 this.b = b;
-                if(actionIDAtStart==this.actionID);
-                setTimeout(()=>{resolve();},afterWait);
+                if(actionIDAtStart==this.actionID)
+                    setTimeout(()=>{resolve();},afterWait);
             })
+        })
+    }
+    doStrobe(rate, duration, startTime, r) {
+        if(new Date().getTime() < startTime+duration) {
+            this.fadeRGB(255, 255, 255, 0, rate).then(() => {
+                this.fadeRGB(0, 0, 0, 0, rate).then(() => {
+                    this.doStrobe(rate, duration, startTime, r);
+                })
+            })
+        }
+        else
+            r();
+    }
+    strobe(rate=30, duration=1000) {
+        return new Promise((resolve, reject)=>{
+            this.doStrobe(rate,duration,new Date().getTime(), resolve);
         })
     }
 

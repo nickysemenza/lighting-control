@@ -6,14 +6,14 @@ export default class DMXRGBLight extends Light {
         this.startAddress = startAddress;
         this.endAddress = endAddress;
         this.universe = universe;
-        this.profile = {dimmer: 1, r:5, g:6, b:7, w:8};
+        this.profile = lightTypes.PROFILE_RGBW_PAR_1;
     }
     getDMXChannelValues() {
         let values = {};
         let human = {};
-        Object.keys(this.profile).forEach(attr=>
+        Object.keys(this.profile.channelMap).forEach(attr=>
         {
-            let channel = this.profile[attr]+this.startAddress-1;
+            let channel = this.profile.channelMap[attr]+this.startAddress-1;
             values[channel] = Math.ceil(this[attr] ? this[attr] : 0);
             human[channel] = {value: Math.ceil(this[attr]), channel: attr};
         });
