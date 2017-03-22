@@ -18,9 +18,8 @@ function sendDMX() {
 
     Object.keys(lights).forEach(l=>{
         let light = lights[l];
-        if(light.type == lightTypges.LIGHT_TYPE_DMX_RGB) {
+        if(light.type == lightTypes.LIGHT_TYPE_DMX_RGB) {
             let lightVal = light.getDMXChannelValues();
-            // console.log(lightVal);
 
             Object.keys(lightVal.values).forEach(v=>{
                 DMX[lightVal.universe][v] = lightVal.values[v];

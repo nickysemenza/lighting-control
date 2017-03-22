@@ -6,7 +6,7 @@
   "scripts": {
     "kue": "kue-dashboard -p 3050 -q lighting-q",
     "redis-commander": "redis-commander",
-    "start": "nodemon servergit /index.js --exec babel-node"
+    "start": "nodemon server/index.js --exec babel-node"
   },
   "author": "Nicky Semenza <nicky@nickysemenza.com> (http://nickysemenza.com/)",
   "license": "ISC",

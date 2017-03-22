@@ -5,14 +5,25 @@ export default class HueLight extends Light {
     constructor(name, hue_id,) {
         super(name, lightTypes.LIGHT_TYPE_HUE);
         this.hue_id = hue_id;
+        hue_api
+            .setLightState(this.hue_id, hue_lightState.create().off())
+            .then()
+            .done();
     }
     fadeRGB(r,g,b, duration=100) {
-        const displayResult = function (result) {
-            console.log(JSON.stringify(result, null, 2));
-        };
-        this.r=r;
-        this.g=g;
-        this.b=b;
-        hue_api.setLightState(1, hue_lightState.create().on().transitionTime(duration/100).rgb(r, g, b)).then(displayResult).done();
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{resolve()},duration);
+            // const displayResult = function (result) {
+            //     // console.log("fff",JSON.stringify(result, null, 2));
+            //     resolve();
+            // };
+            this.r=r;
+            this.g=g;
+            this.b=b;
+            hue_api
+                .setLightState(this.hue_id, hue_lightState.create().on().transitionTime(duration/100).rgb(r, g, b))
+                .then()
+                .done();
+        })
     }
 }
