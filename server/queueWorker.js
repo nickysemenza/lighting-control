@@ -14,6 +14,7 @@ export function processQueue() {
 }
 
 let universe = 1;
+let univ1_last_val = null;
 let DMX = [null,new Array(255).fill(0)];//fill universe 1's channels with 0
 function sendDMX() {
 
@@ -30,14 +31,18 @@ function sendDMX() {
     });
 
     let values = DMX[universe].slice(1).join(); // make comma separated array, but ignore 0 index
-    request.post({
-        url: `http://${settings.ola_server.ip}:${settings.ola_server.port}/set_dmx`,
-        form: {
-            d: values,
-            u: universe,
-        },
-    }, (err,) => {
-        if (err)
-            console.log(err);
-    });
+    if(values != univ1_last_val) {//deuplicate requests
+        request.post({
+            url: `http://${settings.ola_server.ip}:${settings.ola_server.port}/set_dmx`,
+            form: {
+                d: values,
+                u: universe,
+            },
+        }, (err) => {
+            console.log("aa");
+            univ1_last_val = values;
+            if (err)
+                console.log(err);
+        });
+    }
 }
