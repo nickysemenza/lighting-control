@@ -64,20 +64,23 @@ export default class Light {
             })
         })
     }
-    doStrobe(rate, duration, startTime, r) {
+    doStrobe(rate, duration, startTime, r, ...colors) {
         if(new Date().getTime() < startTime+duration) {
-            this.fadeRGB(255, 255, 255, 0, rate).then(() => {
+            this.fadeRGB(...colors, 0, rate).then(() => {
                 this.fadeRGB(0, 0, 0, 0, rate).then(() => {
-                    this.doStrobe(rate, duration, startTime, r);
+                    this.doStrobe(rate, duration, startTime, r, ...colors);
                 })
             })
         }
         else
             r();
     }
-    strobe(rate=30, duration=1000) {
+    strobe(rate=30, duration=1000, ...colors) {
+        if(colors.length!=3)
+            colors = [255,255,255];
+        console.log(colors);
         return new Promise((resolve, reject)=>{
-            this.doStrobe(rate,duration,new Date().getTime(), resolve);
+            this.doStrobe(rate,duration,new Date().getTime(), resolve, ...colors);
         })
     }
 
